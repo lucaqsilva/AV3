@@ -26,8 +26,12 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .shell { width: min(1160px, calc(100% - 40px)); margin-inline: auto; }
 .topbar { height: 72px; background: rgba(255,255,255,.92); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; backdrop-filter: blur(12px); }
 .topbar__content { height: 100%; display: flex; align-items: center; justify-content: space-between; }
-.brand { display: flex; align-items: center; gap: 10px; color: var(--ink); font: 800 21px 'Manrope', sans-serif; text-decoration: none; letter-spacing: -.5px; }
-.brand__icon { display: grid; place-items: center; width: 38px; height: 38px; color: white; background: var(--primary); border-radius: 11px; transform: rotate(-2deg); }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--ink); font: 700 20px 'Manrope', sans-serif; text-decoration: none; letter-spacing: -.7px; }
+.brand__icon { display: grid; place-items: center; width: 40px; height: 40px; color: white; background: linear-gradient(145deg, #806ff0, #5947c8); border-radius: 13px; transform: rotate(-3deg); box-shadow: 0 7px 16px rgba(103,85,217,.28); transition: transform .2s ease; }
+.brand:hover .brand__icon { transform: rotate(3deg) translateY(-1px); }
+.brand__name { text-transform: lowercase; }
+.brand__name strong { color: var(--primary); font-weight: 800; position: relative; }
+.brand__name strong::after { content: ''; position: absolute; left: 1px; right: 0; bottom: -3px; height: 3px; border-radius: 999px; background: linear-gradient(90deg, var(--primary), #a394ff); transform: rotate(-1deg); }
 
 .button { border: 0; min-height: 44px; padding: 0 18px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; transition: .18s ease; }
 .button:hover { transform: translateY(-1px); }

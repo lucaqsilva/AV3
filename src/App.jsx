@@ -128,7 +128,7 @@ export default function App() {
         </section>
       </main>
 
-      <footer className="page-footer"><div className="shell">Stockly <span>•</span> Projeto acadêmico desenvolvido com React</div></footer>
+      <footer className="page-footer"><div className="shell">Meu Armário <span>•</span> Projeto desenvolvido por Lucas Nicoli da Silva</div></footer>
       {formOpen && <ProductForm product={editing} onSubmit={saveProduct} onClose={closeForm} />}
       {deleting && <ConfirmDialog product={deleting} onConfirm={deleteProduct} onCancel={() => setDeleting(null)} />}
       {toast && <Toast message={toast} />}

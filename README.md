@@ -1,4 +1,4 @@
-# Stockly — Gestão de produtos
+# Meu Armário — Gestão de produtos
 
 Projeto acadêmico das Práticas 5 e 6: uma aplicação front-end em React para cadastrar e gerenciar produtos.
 
