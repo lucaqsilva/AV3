@@ -10,7 +10,9 @@ import { categories } from './data/categories.js'
 import { productService } from './services/productService.js'
 
 export default function App() {
-  const [products, setProducts] = useState(() => productService.list())
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState('')
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('Todas')
   const [sort, setSort] = useState('recent')
@@ -18,6 +20,30 @@ export default function App() {
   const [editing, setEditing] = useState(null)
   const [deleting, setDeleting] = useState(null)
   const [toast, setToast] = useState('')
+
+  const loadProducts = () => {
+    setLoading(true)
+    setLoadError('')
+    productService.list()
+      .then(setProducts)
+      .catch((error) => setLoadError(error.message))
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    let active = true
+    productService.list()
+      .then((data) => {
+        if (active) setProducts(data)
+      })
+      .catch((error) => {
+        if (active) setLoadError(error.message)
+      })
+      .finally(() => {
+        if (active) setLoading(false)
+      })
+    return () => { active = false }
+  }, [])
 
   useEffect(() => {
     if (!toast) return undefined
@@ -65,23 +91,32 @@ export default function App() {
     setEditing(null)
   }
 
-  const saveProduct = (values) => {
-    if (editing) {
-      productService.update(editing.id, values)
-      setToast('Produto atualizado com sucesso!')
-    } else {
-      productService.create(values)
-      setToast('Produto cadastrado com sucesso!')
+  const saveProduct = async (values) => {
+    try {
+      if (editing) {
+        const updated = await productService.update(editing.id, values)
+        setProducts((current) => current.map((product) => product.id === updated.id ? updated : product))
+        setToast('Produto atualizado com sucesso!')
+      } else {
+        const created = await productService.create(values)
+        setProducts((current) => [created, ...current])
+        setToast('Produto cadastrado com sucesso!')
+      }
+      closeForm()
+    } catch (error) {
+      setToast(error.message)
     }
-    setProducts(productService.list())
-    closeForm()
   }
 
-  const deleteProduct = () => {
-    productService.remove(deleting.id)
-    setProducts(productService.list())
-    setDeleting(null)
-    setToast('Produto excluído com sucesso!')
+  const deleteProduct = async () => {
+    try {
+      await productService.remove(deleting.id)
+      setProducts((current) => current.filter((product) => product.id !== deleting.id))
+      setDeleting(null)
+      setToast('Produto excluído com sucesso!')
+    } catch (error) {
+      setToast(error.message)
+    }
   }
 
   return (
@@ -124,7 +159,16 @@ export default function App() {
             </select>
           </div>
 
-          <ProductList products={filteredProducts} onEdit={openEdit} onDelete={setDeleting} onNewProduct={openCreate} />
+          {loading && <div className="empty-state"><h3>Carregando produtos...</h3><p>Consultando o banco de dados.</p></div>}
+          {!loading && loadError && (
+            <div className="empty-state">
+              <span><Icon name="alert" size={30} /></span>
+              <h3>Não foi possível carregar os produtos</h3>
+              <p>{loadError}</p>
+              <button className="button button--primary" type="button" onClick={loadProducts}>Tentar novamente</button>
+            </div>
+          )}
+          {!loading && !loadError && <ProductList products={filteredProducts} onEdit={openEdit} onDelete={setDeleting} onNewProduct={openCreate} />}
         </section>
       </main>
 

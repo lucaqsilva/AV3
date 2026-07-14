@@ -14,7 +14,7 @@ Foram aplicados princípios de UX como hierarquia visual, rótulos claros, feedb
 
 Foram implementadas validações para impedir nomes vazios ou muito curtos, categoria não selecionada, preço inválido, quantidade negativa ou decimal e descrições acima do limite. Cada problema é exibido junto ao campo correspondente.
 
-A interface se adapta a computadores, tablets e celulares com media queries. Também foram incluídos filtro, ordenação, indicadores de estoque e persistência no navegador. A camada `productService` separa o acesso aos dados da interface e facilita uma futura integração com API REST.
+A interface se adapta a computadores, tablets e celulares com media queries. Também foram incluídos filtro, ordenação, indicadores de estoque e persistência em banco SQLite. A camada `productService` separa o acesso aos dados e consome uma API REST desenvolvida em Node.js.
 
 ## Versionamento sugerido
 
@@ -28,8 +28,8 @@ O projeto inclui `.gitignore` para evitar o versionamento de dependências e arq
 
 ## Possível evolução Full Stack
 
-Em uma etapa futura, as funções de `productService.js` podem usar `fetch` para consumir endpoints de uma API Node.js, por exemplo `GET /products`, `POST /products`, `PUT /products/:id` e `DELETE /products/:id`. A separação atual permite essa troca sem reescrever os componentes de apresentação.
+A evolução Full Stack foi implementada: as funções de `productService.js` usam `fetch` para consumir os endpoints `GET /api/products`, `POST /api/products`, `PUT /api/products/:id` e `DELETE /api/products/:id`. A API valida os dados novamente no servidor e usa SQLite para garantir persistência entre execuções.
 
 ## Conclusão
 
-O resultado atende ao cadastro e à visualização de produtos e acrescenta recursos esperados em um sistema real: validação, edição, exclusão segura, pesquisa, filtros, persistência, acessibilidade e responsividade.
+O resultado atende ao cadastro e à visualização de produtos e acrescenta recursos esperados em um sistema real: validação no cliente e no servidor, edição, exclusão segura, pesquisa, filtros, banco de dados, API, acessibilidade e responsividade.

@@ -1,65 +1,31 @@
-const STORAGE_KEY = 'stockly-products-v1'
+async function request(path = '', options = {}) {
+  const response = await fetch(`/api/products${path}`, {
+    headers: { 'Content-Type': 'application/json', ...options.headers },
+    ...options,
+  })
 
-const sampleProducts = [
-  {
-    id: 'sample-1',
-    name: 'Mouse sem fio',
-    category: 'Eletrônicos',
-    price: 89.9,
-    quantity: 14,
-    description: 'Mouse ergonômico com conexão USB e bateria de longa duração.',
-    createdAt: '2026-07-12T10:00:00.000Z',
-  },
-  {
-    id: 'sample-2',
-    name: 'Caderno executivo',
-    category: 'Escritório',
-    price: 34.5,
-    quantity: 3,
-    description: 'Caderno de capa dura com 160 páginas pautadas.',
-    createdAt: '2026-07-13T14:30:00.000Z',
-  },
-]
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}))
+    throw new Error(data.message || 'Não foi possível acessar o banco de dados.')
+  }
 
-function save(products) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(products))
-  return products
+  return response.status === 204 ? null : response.json()
 }
 
 export const productService = {
   list() {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY)
-      return stored ? JSON.parse(stored) : save(sampleProducts)
-    } catch {
-      return sampleProducts
-    }
+    return request()
   },
 
   create(product) {
-    const products = this.list()
-    const newProduct = {
-      ...product,
-      id: crypto.randomUUID(),
-      createdAt: new Date().toISOString(),
-    }
-    save([newProduct, ...products])
-    return newProduct
+    return request('', { method: 'POST', body: JSON.stringify(product) })
   },
 
   update(id, changes) {
-    const products = this.list()
-    const updated = products.map((product) =>
-      product.id === id ? { ...product, ...changes, updatedAt: new Date().toISOString() } : product,
-    )
-    save(updated)
-    return updated.find((product) => product.id === id)
+    return request(`/${id}`, { method: 'PUT', body: JSON.stringify(changes) })
   },
 
   remove(id) {
-    save(this.list().filter((product) => product.id !== id))
+    return request(`/${id}`, { method: 'DELETE' })
   },
 }
-
-// Este serviço concentra o acesso aos dados. Para integrar uma API REST,
-// substitua o localStorage por chamadas fetch sem alterar os componentes.
